@@ -1,6 +1,6 @@
 
 /*
- * *** YOUR NAME GOES HERE / YOUR SECTION NUMBER ***
+ * *** Brayden Larnard / COMP 272-002 ***
  *
  * This java file is a Java object implementing simple AVL Tree.
  * You are to complete the deleteElement method.
@@ -344,7 +344,7 @@ class LUC_AVLTree {
     private Node deleteElement(int value, Node node) {
 
         /*
-         * ADD CODE HERE
+         * 
          * 
          * NOTE, that you should use the existing coded private methods
          * in this file, which include:
@@ -360,7 +360,77 @@ class LUC_AVLTree {
          * To understand what each of these methods do, see the method prologues and
          * code for each. You can also look at the method InsertElement, as it has do
          * do many of the same things as this method.
+         * 
+         * 
+         * 
          */
+
+        // Edge case: tree is null, just return null
+        if (node == null) {
+            return null;
+        }
+
+         // First find the node to delete by searching the tree using recursion
+         if (value < node.value) {
+            node.leftChild = deleteElement(value, node.leftChild);
+         } else if (value > node.value) {
+            node.rightChild = deleteElement(value, node.rightChild);
+         } else {
+            // If the above isn't true, then we found the node to delete
+
+            // Scenario 1: the node is a leaf, so just remove it
+            if (node.leftChild == null && node.rightChild == null) {
+                return null;
+            }
+
+            // Scenario 2: the node has only a left subtree, so replace node with left subtree
+            else if (node.rightChild == null && node.leftChild != null) {
+                return node.leftChild;
+            }
+
+            // Scenario 3: the node has only a right subtree, so replace node with right subtree
+            else if (node.leftChild == null && node.rightChild != null) {
+                return node.rightChild;
+            }
+
+            // Scenario 4: the node has both left and right subtrees
+            else {
+                // Find the successor, which would be the smallest value in the right subtree
+                Node successor = minValueNode(node.rightChild);
+                // Copy the inorder successor's value to this node
+                node.value = successor.value;
+                // Delete the inorder successor from the right subtree
+                node.rightChild = deleteElement(successor.value, node.rightChild);
+            }
+         }
+
+         // Re-adjust the current node's height using the getMaxHeight() method
+         node.height = getMaxHeight(getHeight(node.leftChild), getHeight(node.rightChild)) + 1;
+
+         // Check the balance factor using the getBalanceFactor() method
+         int balance = getBalanceFactor(node);
+
+        // Rebalance the tree if needed
+        // If balance > 1 then that means the left subtree is taller
+        if (balance > 1) {
+            // If the balance factor is positive then use the LL rotation
+            if (getBalanceFactor(node.leftChild) >= 0) {
+                node = LLRotation(node);
+            // If it is negative, then use the LR rotation
+            } else {
+                node = LRRotation(node);
+            }
+        }
+        // If the balance is < -1 then that means the right subtree is taller
+        else if (balance < -1) {
+            // If the balance factor is negative then use the RR rotation
+            if (getBalanceFactor(node.rightChild) <= 0) {
+                node = RRRotation(node);
+            // If it is positive then use the RL rotation
+            } else {
+                node = RLRotation(node);
+            }
+        }
 
         return node;
     }
