@@ -89,6 +89,7 @@ public class TreeProblems {
       }
     }
 
+    // If we made it through the entire loop without returning false, the trees are equal
     return true;
 
   }
